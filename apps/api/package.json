@@ -1,0 +1,24 @@
+{
+  "name": "@billing/api",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node --env-file-if-exists=.env dist/server.js",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc",
+    "dev": "tsx watch --env-file-if-exists=.env src/server.ts"
+  },
+  "dependencies": {
+    "fastify": "latest",
+    "@fastify/cors": "latest",
+    "@supabase/supabase-js": "latest",
+    "playwright": "latest",
+    "decimal.js": "latest",
+    "date-fns": "latest",
+    "zod": "latest",
+    "@billing/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "tsx": "latest"
+  }
+}

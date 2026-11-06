@@ -1,0 +1,169 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+}
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.45 0 0);
+  --border: oklch(0.922 0 0);
+  --ring: oklch(0.55 0 0);
+}
+
+body {
+  @apply bg-background text-foreground;
+}
+
+.signin {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: calc(100svh - 48px);
+  margin: 24px;
+  padding: 6px;
+  border-radius: 30px;
+  background: #fff;
+  box-shadow: 0 0 0 24px #eeeaf2;
+  font-family: system-ui, sans-serif;
+}
+
+.signin-art {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 560px;
+  padding: clamp(28px, 5vw, 72px);
+  border-radius: 24px;
+  color: #fff;
+  position: relative; isolation: isolate; overflow: hidden; background: #100720;
+}
+
+.signin-eyebrow, .signin-caption p:first-child {
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .19em;
+  text-transform: uppercase;
+}
+
+.signin-caption h2, .signin-content h1 {
+  font-family: Georgia, serif;
+  font-weight: 400;
+  letter-spacing: -.055em;
+  line-height: .99;
+}
+
+.signin-caption h2 {
+  margin: 18px 0;
+  font-size: clamp(3rem, 5vw, 5.4rem);
+}
+
+.signin-caption p:last-child { color: #e8daef; }
+
+.signin-panel {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  justify-items: center;
+  align-items: center;
+  padding: 36px clamp(20px, 5vw, 72px) 24px;
+  color: #1a1520;
+}
+
+.signin-brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-weight: 650;
+}
+
+.signin-brand svg { color: #792cca; }
+.signin-content { width: min(100%, 370px); padding: 48px 0; }
+.signin-content header { text-align: center; margin-bottom: 32px; }
+.signin-content h1 { font-size: clamp(2.7rem, 3.3vw, 3.5rem); }
+.signin-content header p { margin-top: 12px; color: #625b6c; font-size: .9rem; }
+.signin-content form { display: grid; gap: 18px; }
+.signin-content label { display: block; margin-bottom: 7px; font-size: .86rem; font-weight: 600; }
+.signin-content input {
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 13px;
+  border: 1px solid #e8e3ed;
+  border-radius: 10px;
+  background: #f6f4f8;
+}
+.signin-content :is(input, button):focus-visible { outline: 2px solid #792cca; outline-offset: 2px; }
+.signin-password { position: relative; }
+.signin-password input { padding-right: 50px; }
+.signin-password button {
+  position: absolute;
+  inset: 3px 3px 3px auto;
+  width: 42px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  color: #625b6c;
+  cursor: pointer;
+}
+.signin-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 48px;
+  border-radius: 10px;
+  background: #1d1528;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+.signin-submit:hover:not(:disabled) { background: #38204d; }
+.signin-submit:disabled { opacity: .55; cursor: not-allowed; }
+.signin-notice, .signin-content [role="alert"] { color: #9d2344; font-size: .85rem; }
+.signin-notice { margin-bottom: 16px; }
+.signin-footer { color: #625b6c; font-size: .75rem; text-align: center; }
+
+@media (max-width: 720px) {
+  .signin { grid-template-columns: 1fr; min-height: calc(100svh - 24px); margin: 12px; }
+  .signin-art { display: none; }
+  .signin-caption h2 { font-size: clamp(2.5rem, 9vw, 4rem); }
+  .signin-panel { padding-top: 26px; }
+  .signin-content { padding: 36px 0; }
+}
+
+.signin-ribbons, .signin-art::after {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.signin-ribbons {
+  z-index: -2;
+  object-fit: cover;
+  object-position: center 35%;
+}
+
+.signin-art::after {
+  content: '';
+  z-index: -1;
+  background: linear-gradient(180deg, #10072070, transparent 28%, #10072018 48%, #100720ed 83%);
+}
+
+.signin-switch {
+  margin-top: 22px;
+  text-align: center;
+  color: #6322a8;
+  font-size: .875rem;
+  font-weight: 650;
+  text-underline-offset: 3px;
+}

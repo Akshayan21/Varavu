@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 880" fill="none">
+  <defs>
+    <linearGradient id="ribbon" x1="0" y1="0" x2="570" y2="700" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2c064b"/>
+      <stop offset=".28" stop-color="#a00c69"/>
+      <stop offset=".48" stop-color="#ff4fbb"/>
+      <stop offset=".61" stop-color="#6f23dc"/>
+      <stop offset=".81" stop-color="#1c50db"/>
+      <stop offset="1" stop-color="#39ddff"/>
+    </linearGradient>
+    <filter id="glow"><feGaussianBlur stdDeviation="23"/></filter>
+  </defs>
+  <rect width="720" height="880" fill="#100720"/>
+  <path d="M-80 95 Q220 425 550 358 T820 503" stroke="url(#ribbon)" stroke-width="180" opacity=".55" filter="url(#glow)"/>
+  <g stroke="url(#ribbon)">
+  <path d="M-180 -145 C140 80 300 210 560 160 S850 220 900 390" stroke-width="12" opacity="0.45"/>
+  <path d="M-180 -129 C140 100 300 226 560 179 S850 235 900 404" stroke-width="14" opacity="0.56"/>
+  <path d="M-180 -113 C140 120 300 242 560 198 S850 250 900 418" stroke-width="16" opacity="0.67"/>
+  <path d="M-180 -97 C140 140 300 258 560 217 S850 265 900 432" stroke-width="18" opacity="0.78"/>
+  <path d="M-180 -81 C140 160 300 274 560 236 S850 280 900 446" stroke-width="20" opacity="0.89"/>
+  <path d="M-180 -65 C140 180 300 290 560 255 S850 295 900 460" stroke-width="12" opacity="0.45"/>
+  <path d="M-180 -49 C140 200 300 306 560 274 S850 310 900 474" stroke-width="14" opacity="0.56"/>
+  <path d="M-180 -33 C140 220 300 322 560 293 S850 325 900 488" stroke-width="16" opacity="0.67"/>
+  <path d="M-180 -17 C140 240 300 338 560 312 S850 340 900 502" stroke-width="18" opacity="0.78"/>
+  <path d="M-180 -1 C140 260 300 354 560 331 S850 355 900 516" stroke-width="20" opacity="0.89"/>
+  <path d="M-180 15 C140 280 300 370 560 350 S850 370 900 530" stroke-width="12" opacity="0.45"/>
+  <path d="M-180 31 C140 300 300 386 560 369 S850 385 900 544" stroke-width="14" opacity="0.56"/>
+  <path d="M-180 47 C140 320 300 402 560 388 S850 400 900 558" stroke-width="16" opacity="0.67"/>
+  <path d="M-180 63 C140 340 300 418 560 407 S850 415 900 572" stroke-width="18" opacity="0.78"/>
+  <path d="M-180 79 C140 360 300 434 560 426 S850 430 900 586" stroke-width="20" opacity="0.89"/>
+  <path d="M-180 95 C140 380 300 450 560 445 S850 445 900 600" stroke-width="12" opacity="0.45"/>
+  <path d="M-180 111 C140 400 300 466 560 464 S850 460 900 614" stroke-width="14" opacity="0.56"/>
+  <path d="M-180 127 C140 420 300 482 560 483 S850 475 900 628" stroke-width="16" opacity="0.67"/>
+  <path d="M-180 143 C140 440 300 498 560 502 S850 490 900 642" stroke-width="18" opacity="0.78"/>
+  <path d="M-180 159 C140 460 300 514 560 521 S850 505 900 656" stroke-width="20" opacity="0.89"/>
+  <path d="M-180 175 C140 480 300 530 560 540 S850 520 900 670" stroke-width="12" opacity="0.45"/>
+  <path d="M-180 191 C140 500 300 546 560 559 S850 535 900 684" stroke-width="14" opacity="0.56"/>
+  <path d="M-180 207 C140 520 300 562 560 578 S850 550 900 698" stroke-width="16" opacity="0.67"/>
+  <path d="M-180 223 C140 540 300 578 560 597 S850 565 900 712" stroke-width="18" opacity="0.78"/>
+  <path d="M-180 239 C140 560 300 594 560 616 S850 580 900 726" stroke-width="20" opacity="0.89"/>
+  </g>
+</svg>

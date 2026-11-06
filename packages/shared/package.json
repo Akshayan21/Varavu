@@ -1,0 +1,18 @@
+{
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "default": "./dist/index.js"
+  },
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "version": "0.0.0",
+  "name": "@billing/shared",
+  "dependencies": {
+    "zod": "latest"
+  }
+}

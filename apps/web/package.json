@@ -1,0 +1,39 @@
+{
+  "name": "@billing/web",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "build": "vite build",
+    "dev": "vite"
+  },
+  "dependencies": {
+    "react": "latest",
+    "react-dom": "latest",
+    "react-router-dom": "latest",
+    "@tanstack/react-query": "latest",
+    "@tanstack/react-table": "latest",
+    "react-hook-form": "latest",
+    "@hookform/resolvers": "latest",
+    "zod": "latest",
+    "recharts": "latest",
+    "react-is": "latest",
+    "tailwindcss": "latest",
+    "@tailwindcss/vite": "latest",
+    "@supabase/supabase-js": "latest",
+    "date-fns": "latest",
+    "clsx": "latest",
+    "tailwind-merge": "latest",
+    "class-variance-authority": "latest",
+    "lucide-react": "latest",
+    "radix-ui": "latest",
+    "@billing/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "vite": "latest",
+    "@vitejs/plugin-react": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "shadcn": "latest"
+  }
+}
