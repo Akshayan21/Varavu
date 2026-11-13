@@ -2,6 +2,8 @@
 
 Prepared on 13 November 2026.
 
+Implementation status updated after integration. The seven migrations from `20261114000100` through `20261114000700` implement the 22-table structure and are applied to the linked Supabase project. Billing, style resolution, receipts, challans, templates, private files, and report APIs are connected. PDF jobs run on download requests. Report jobs materialize data in `report_exports.data_snapshot`. The template editor currently supports presets, accent, logo, and signature. Advanced layout editing and browser-data import tooling remain additional application work. See the migration SQL for exact types, permissions, and supported operations.
+
 ## 1. Purpose and status
 
 This is the target PostgreSQL/Supabase schema for the full application described in [THOGAI_PROJECT_SCOPE.md](THOGAI_PROJECT_SCOPE.md), plus automatic style creation during billing. It is a design specification for implementation. The existing database is documented separately in [DATABASE_SCHEMA.md](DATABASE_SCHEMA.md).

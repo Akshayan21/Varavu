@@ -101,6 +101,7 @@ export function InvoiceDraft({ workspaceId, seller }: { workspaceId: string; sel
     seller: { ...seller, bank_details: bank, upi_id: upi },
     accent: mockMode ? localStorage.getItem('thogai-bill-accent-' + seller.id) ?? undefined
       : catalog.data?.document_templates.find(row=>row.id===seller.default_invoice_template_id)?.settings_json.accent,
+    templatePreset:catalog.data?.document_templates.find(row=>row.id===seller.default_invoice_template_id)?.settings_json.preset,
     customer: customer ?? { id: '', legal_name: 'Select a customer' },
     date, due, reference, notes, lines, discountCents, taxBasisPoints, status: 'Draft', receipts: [],
   };

@@ -506,3 +506,6 @@ input[type=checkbox]:disabled { opacity:.5; cursor:not-allowed; }
 .analytics-kpi h2 { padding-left: 30px; min-height: 27px; }
 .analytics-kpi strong { font-size: clamp(1.05rem,1.35vw,1.4rem); }
 @media(max-width:550px) { .analytics-kpi > svg { left: 10px; top: 12px; }.analytics-kpi h2 { padding-left: 26px; } }
+
+.garment-minimal .garment-accent { height: 2px; }
+.garment-minimal .garment-table th { background: transparent; }
