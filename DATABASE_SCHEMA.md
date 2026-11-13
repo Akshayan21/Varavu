@@ -1,5 +1,7 @@
 # Application Database Schema
 
+> Historical baseline. The seven `20261114...` migrations have since been applied to the linked Supabase project and expand the application to 22 tables. See [the complete schema design](DATABASE_SCHEMA_PROPOSED.md) and [setup instructions](README.md). Migration SQL is the authoritative implemented definition.
+
 As of 13 November 2026.
 
 ## Scope

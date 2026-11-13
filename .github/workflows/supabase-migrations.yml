@@ -21,6 +21,8 @@ jobs:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
       SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
       SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+      # Verified session pooler for this project; port 5432 supports IPv4.
+      SUPABASE_DB_HOST: aws-0-ap-south-1.pooler.supabase.com
     steps:
       - uses: actions/checkout@v4
       - name: Validate configuration
@@ -38,7 +40,21 @@ jobs:
           version: 3.0.0
       - name: Link production database
         run: supabase link --project-ref "$SUPABASE_PROJECT_ID"
+      - name: Configure IPv4 session connection
+        shell: python
+        run: |
+          import os
+          from urllib.parse import quote
+
+          project = os.environ["SUPABASE_PROJECT_ID"]
+          password = quote(os.environ["SUPABASE_DB_PASSWORD"], safe="")
+          host = os.environ["SUPABASE_DB_HOST"]
+          url = f"postgresql://postgres.{project}:{password}@{host}:5432/postgres?sslmode=require"
+          # Mask the complete URL before passing it to later CLI steps.
+          print(f"::add-mask::{url}")
+          with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as output:
+              output.write(f"SUPABASE_DB_URL={url}\n")
       - name: Preview pending migrations
-        run: supabase db push --remote --dry-run
+        run: supabase db push --remote="$SUPABASE_DB_URL" --dry-run
       - name: Apply pending migrations
-        run: supabase db push --remote --yes
+        run: supabase db push --remote="$SUPABASE_DB_URL" --yes

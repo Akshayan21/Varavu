@@ -13,3 +13,11 @@ In your GitHub repository, open **Settings → Secrets and variables → Actions
 Commit new SQL files under `supabase/migrations` and push or merge to `main`. The workflow links the configured project, previews pending migrations, and applies them. Already-applied migrations are tracked by Supabase and skipped. Check the workflow log for the result. Edit schema changes through new migration files so the checked-in history matches the database.
 
 Vercel deployments and this workflow run independently. An application deployment does not wait for database migration completion. Use compatible schema changes when shipping app code and migrations together.
+
+## IPv4 runner connection
+
+GitHub-hosted runners may not support the direct database endpoint's IPv6 address. Both migration steps therefore pass an explicit session-pooler URL to `--remote`, using `aws-0-ap-south-1.pooler.supabase.com:5432`, verified from this project's saved pooler connection. The URL uses `postgres.<project-ref>`, the existing database-password secret, and required SSL. The password is URL-encoded and the assembled URL is masked in Actions logs. No additional secret is needed.
+
+If the project is moved, update `SUPABASE_DB_HOST` to the host shown under Supabase **Connect → Session pooler**, using port **5432**, not transaction-mode port 6543. Connection guidance: https://supabase.com/docs/guides/database/connecting-to-postgres.
+
+After committing this fix, push it to `main` and start a **new** workflow run. Re-running the old failed job uses its original workflow revision. The preview must succeed before the apply step can run.

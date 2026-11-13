@@ -375,7 +375,7 @@ export function CompanySettings({ entity }: { entity: Entity }) {
           catch(err) { setMessage(err instanceof Error?err.message:'Could not save the template.'); }
           finally {setBusy(false);}
         }}>Save template</button>{message && <p role="status">{message}</p>}</section>
-      <BillPaper bill={{ ...example, accent }} />
+      <BillPaper bill={{ ...example, accent, templatePreset:preset }} />
     </div>
   </>;
 }
