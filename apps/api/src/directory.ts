@@ -21,7 +21,7 @@ function databaseError(reply: FastifyReply, code: string) {
 export function registerDirectory(app: FastifyInstance, config?: SupabaseConfig) {
   const resources = [
     { path: 'entities', table: 'billing_entities', schema: billingEntityInput },
-    { path: 'customers', table: 'customers', schema: customerInput },
+    { path: 'entities/:entityId/customers', table: 'customers', schema: customerInput },
   ] as const;
 
   for (const { path, table, schema } of resources) {
@@ -48,15 +48,27 @@ export function registerDirectory(app: FastifyInstance, config?: SupabaseConfig)
       if (!workspace) return reply.code(409).send({ error: 'Initialize your workspace first.' });
 
       const workspaceId = workspace.id;
+      const params = request.params as { id?: string; entityId?: string };
+      const scope: Record<string, string> = { workspace_id: workspaceId };
+      if (table === 'customers') {
+        const entityId = z.uuid().safeParse(params.entityId);
+        if (!entityId.success) return reply.code(400).send({ error: 'Invalid company ID.' });
+        let entityQuery = supabase.from('billing_entities').select('id').eq('id', entityId.data).eq('workspace_id', workspaceId);
+        if(request.method!=='GET') entityQuery=entityQuery.eq('is_active',true);
+        const {data:entity,error}=await entityQuery.maybeSingle();
+        if (error) return databaseError(reply, error.code);
+        if (!entity) return reply.code(404).send({ error: 'Active company not found.' });
+        scope.entity_id = entity.id;
+      }
       if (request.method === 'POST') {
         const input = schema.safeParse(request.body);
         if (!input.success) return reply.code(400).send({ error: 'Invalid record.', issues: input.error.issues });
-        const { data, error } = await supabase.from(table).insert({ ...input.data, workspace_id: workspaceId })
+        const { data, error } = await supabase.from(table).insert({ ...input.data, ...scope })
           .select().single();
         return error ? databaseError(reply, error.code) : reply.code(201).send(data);
       }
 
-      const params = request.params as { id?: string };
+
       if (params.id !== undefined) {
         const id = recordId.safeParse(params);
         if (!id.success) return reply.code(400).send({ error: 'Invalid record ID.' });
@@ -66,12 +78,12 @@ export function registerDirectory(app: FastifyInstance, config?: SupabaseConfig)
             return reply.code(400).send({ error: 'Provide valid fields to update.', issues: input.error?.issues });
           }
           const { data, error } = await supabase.from(table).update(input.data)
-            .eq('workspace_id', workspaceId).eq('id', id.data.id).select().maybeSingle();
+            .match(scope).eq('id', id.data.id).select().maybeSingle();
           if (error) return databaseError(reply, error.code);
           return data ?? reply.code(404).send({ error: 'Record not found.' });
         }
         const { data, error } = await supabase.from(table).select()
-          .eq('workspace_id', workspaceId).eq('id', id.data.id).maybeSingle();
+          .match(scope).eq('id', id.data.id).maybeSingle();
         if (error) return databaseError(reply, error.code);
         return data ?? reply.code(404).send({ error: 'Record not found.' });
       }
@@ -79,7 +91,7 @@ export function registerDirectory(app: FastifyInstance, config?: SupabaseConfig)
       const parsed = filters.safeParse(request.query);
       if (!parsed.success) return reply.code(400).send({ error: 'Invalid list filters.' });
       const { page, pageSize, active, search } = parsed.data;
-      let query = supabase.from(table).select('*', { count: 'exact' }).eq('workspace_id', workspaceId);
+      let query = supabase.from(table).select('*', { count: 'exact' }).match(scope);
       if (active !== undefined) query = query.eq('is_active', active === 'true');
       if (search) {
         const literal = search.replace(/[\\%_]/g, (character) => '\\' + character);
@@ -92,3 +104,4 @@ export function registerDirectory(app: FastifyInstance, config?: SupabaseConfig)
     }
   }
 }
+

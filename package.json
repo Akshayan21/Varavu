@@ -9,17 +9,19 @@
     "typecheck": "pnpm --filter @billing/shared build && pnpm -r typecheck",
     "build": "pnpm -r build",
     "test:e2e": "pnpm --filter @billing/shared build && playwright test",
+    "test:e2e:database": "pnpm --filter @billing/shared build && playwright test --config playwright.database.config.ts",
     "test": "pnpm --filter @billing/shared build && vitest run",
     "dev": "corepack pnpm --filter @billing/shared build && corepack pnpm -r --parallel dev",
     "dev:web": "corepack pnpm --filter @billing/shared build && corepack pnpm --filter @billing/web dev",
     "dev:api": "corepack pnpm --filter @billing/shared build && corepack pnpm --filter @billing/api dev"
   },
   "devDependencies": {
-    "typescript": "latest",
-    "vitest": "latest",
+    "@electric-sql/pglite": "^0.5.16",
     "@playwright/test": "latest",
-    "@types/node": "latest",
-    "supabase": "latest"
+    "@types/node": "^26.6.6",
+    "supabase": "latest",
+    "typescript": "latest",
+    "vitest": "latest"
   },
   "type": "module"
 }

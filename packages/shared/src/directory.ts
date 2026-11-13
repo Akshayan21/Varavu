@@ -24,11 +24,16 @@ export const billingEntityInput = common.extend({
   invoice_prefix: shortText,
   default_due_days: days.optional(),
   financial_year_start_month: z.number().int().min(1).max(12).optional(),
+  dc_prefix: shortText,
+  numbering_mode: z.enum(['financial_year','continuous']).optional(),
+  default_terms: z.string().trim().max(2000).nullable().optional(),
+  rounding_increment: z.union([z.literal(0),z.literal(0.01),z.literal(1)]).optional(),
 });
 
 export const customerInput = common.extend({
   shipping_address: address.nullable().optional(),
   contact_name: shortText,
+  contact_phone: shortText,
   country: shortText,
   payment_terms_days: days.nullable().optional(),
   notes: z.string().trim().max(4000).nullable().optional(),
