@@ -1,0 +1,51 @@
+import { expect, test } from '@playwright/test';
+
+test('checks screen controls, forms, keyboard dropdowns and reports', async ({ page }, info) => {
+  const errors: string[] = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await page.route(/\/api\/v1\/|supabase\.co/, route => { throw new Error('Backend request: ' + route.request().url()); });
+  await page.addInitScript(() => { window.print = () => document.body.setAttribute('data-printed','yes'); });
+  const base='/entities/460e73a5-5733-41df-bcd0-f87134395c01';
+  await page.goto('/');
+  await page.getByRole('link',{name:'Manage companies',exact:true}).click();
+  await page.getByRole('button',{name:'Add Company'}).click();
+  await page.locator('input[name=legal_name]').fill('Audit Company');
+  await page.locator('input[name=entity_code]').fill('AUDIT');
+  await page.getByText('More business and tax details',{exact:true}).click();
+  const checkbox=page.getByRole('checkbox',{name:'GST registered'});
+  await checkbox.check(); await expect(checkbox).toBeChecked();
+  await checkbox.uncheck(); await expect(checkbox).not.toBeChecked();
+  await page.getByRole('button',{name:'Save changes'}).click();
+  await expect(page.getByRole('heading',{name:'Audit Company',exact:true})).toBeVisible();
+  const card=page.getByRole('article').filter({has:page.getByRole('heading',{name:'Audit Company',exact:true})});
+  await card.getByRole('button',{name:'Archive',exact:true}).click();
+  await expect(card.getByText('Archived',{exact:true})).toBeVisible();
+  await card.getByRole('button',{name:'Restore',exact:true}).click();
+  await page.getByRole('combobox',{name:'Status'}).focus();
+  await page.keyboard.press('Enter');
+  await page.getByRole('option',{name:'Archived',exact:true}).click();
+  await expect(page.getByRole('heading',{name:'Audit Company',exact:true})).toHaveCount(0);
+  await page.goto(base+'/invoices');
+  await page.getByRole('combobox',{name:'Status'}).click();
+  await page.getByRole('option',{name:'Draft',exact:true}).click();
+  await expect(page.getByText('No bills match',{exact:true})).toBeVisible();
+  await page.goto(base+'/settings');
+  await page.getByLabel('Accent color').fill('#123456');
+  await page.getByRole('button',{name:'Save template'}).click();
+  await expect(page.getByRole('status')).toContainText('Template saved');
+  await page.reload();
+  await expect(page.getByLabel('Accent color')).toHaveValue('#123456');
+  for (const report of ['billing','collections','outstanding','customers','monthly','print-type','challans','cancelled','companies']) {
+    await page.goto(base+'/reports/'+report);
+    await expect(page.locator('.invoice-print-sheet')).toBeVisible();
+    await page.getByRole('button',{name:'Print / Save PDF'}).click();
+    await expect(page.locator('body')).toHaveAttribute('data-printed','yes');
+    expect(await page.evaluate(()=>document.documentElement.scrollWidth <= innerWidth)).toBeTruthy();
+  }
+  await page.goto(base+'/reports');
+  await expect(page.getByRole('link',{name:'Open report'})).toHaveCount(9);
+  await page.goto('/central');
+  await expect(page.getByRole('heading',{name:'Centralized Dashboard',exact:true})).toBeVisible();
+  expect(errors).toEqual([]);
+  await page.screenshot({path:'test-results/controls-'+info.project.name+'.png',fullPage:true});
+});

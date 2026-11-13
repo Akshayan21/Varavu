@@ -1,5 +1,5 @@
 import { expect, test, vi } from 'vitest';
-import { buildApp } from './app.js';
+import { buildApp } from './build-app.js';
 
 test('reports API health to the web origin', async () => {
   const origin = 'http://localhost:5173';
@@ -65,3 +65,42 @@ test('verifies the caller and initializes only through their Supabase session', 
 });
 
 
+
+test('creates and edits every customer field through authenticated API requests', async () => {
+  const ownerId = '77ffb743-825a-4aa8-909f-914c3cdbe008';
+  const entityId = '460e73a5-5733-41df-bcd0-f87134395c01';
+  const id = '460e73a5-5733-41df-bcd0-f87134395c03';
+  let stored: Record<string, unknown> = {};
+  vi.stubGlobal('fetch', async (input: RequestInfo | URL, init?: RequestInit) => {
+    const request = new Request(input, init);
+    expect(request.headers.get('authorization')).toBe('Bearer owner-token');
+    const path = new URL(request.url).pathname;
+    if (path === '/auth/v1/user') return Response.json({ id: ownerId, email: 'owner@example.com' });
+    if (path === '/rest/v1/workspaces') return Response.json({ id: ownerId });
+    if (path === '/rest/v1/billing_entities') return Response.json({ id: entityId });
+    expect(path).toBe('/rest/v1/customers');
+    if (request.method === 'POST' || request.method === 'PATCH') stored = { ...stored, ...await request.json(), id };
+    return Response.json(stored, { status: request.method === 'POST' ? 201 : 200 });
+  });
+  const app = buildApp({ origin: 'http://localhost:5173', supabase: { url: 'https://supabase.example.test', key: 'publishable-key' } });
+  const base = '/api/v1/entities/' + entityId + '/customers';
+  const headers = { authorization: 'Bearer owner-token' };
+  const payload = { legal_name: 'Test customer', email: 'customer@example.com', phone: '9876543210',
+    billing_address: { line1: '12 Test Street' }, gstin: '33ABCDE1234F1Z5', contact_name: 'Contact Person', contact_phone: '9876543211' };
+  try {
+    const created = await app.inject({ method: 'POST', url: base, headers, payload });
+    expect(created.statusCode).toBe(201);
+    expect(created.json()).toMatchObject(payload);
+    const edited = await app.inject({ method: 'PATCH', url: base + '/' + id, headers,
+      payload: { ...payload, legal_name: 'Updated customer', email: null, gstin: null, contact_phone: '9876543212' } });
+    expect(edited.statusCode).toBe(200);
+    expect(edited.json()).toMatchObject({ ...payload, legal_name: 'Updated customer', email: null, gstin: null, contact_phone: '9876543212' });
+    const loaded = await app.inject({ url: base + '/' + id, headers });
+    expect(loaded.statusCode).toBe(200);
+    expect(loaded.json()).toEqual(edited.json());
+    expect((await app.inject({ method: 'POST', url: base, payload })).statusCode).toBe(401);
+  } finally {
+    await app.close();
+    vi.unstubAllGlobals();
+  }
+});
