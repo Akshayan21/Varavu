@@ -32,9 +32,18 @@ begin
     'from','Test sender','to','Test destination','items',jsonb_build_array(jsonb_build_object('description','Printed garments','quantity','10','unit','Pieces'))));
   perform public.issue_challan(company,(dc->>'id')::uuid,(dc->>'version')::bigint);
   perform public.report_data(array[company],'billing','2026-01-01','2026-12-31');
+  perform public.list_documents(company,'invoices','{"page":1,"pageSize":10}');
+  perform public.document_detail(company,'invoices',(issued->>'id')::uuid);
+  perform public.dashboard_data(array[company],'2026-01-01','2026-12-31');
+  perform public.customer_summary(company,buyer,'2026-01-01','2026-12-31');
+  perform public.filtered_report_data(array[company],'customers','2026-01-01','2026-12-31',now(),buyer);
+  perform public.request_filtered_export(array[company],'companies','2026-01-01','2026-12-31','csv',null);
+  draft:=public.preview_invoice(company,jsonb_build_object('id',gen_random_uuid(),'customerId',buyer,'date','2026-11-01','due','2026-12-01',
+    'lines',jsonb_build_array(jsonb_build_object('description','Preview','quantity','1','rate','10','style','PREVIEW-ONLY'))));
+  if exists(select 1 from public.styles where entity_id=company and style_number='PREVIEW-ONLY') then raise exception 'Preview retained a style';end if;
   if has_function_privilege('anon','public.resolve_style(uuid,text)','execute') then raise exception 'Anonymous style mutation allowed';end if;
   if has_table_privilege('authenticated','public.invoices','insert') then raise exception 'Direct invoice writes allowed';end if;
-  raise notice 'PASS hosted styles, invoice totals, issuance, payment retry, reversal, cancellation, challan, report, and privilege checks';
+  raise notice 'PASS hosted styles, totals, issuance, receipts, challans, scoped queries, dashboard, customer summaries, reports, preview rollback, and privileges';
 end $$;
 set constraints all immediate;
 rollback;

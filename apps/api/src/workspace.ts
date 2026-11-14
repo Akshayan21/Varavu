@@ -5,6 +5,11 @@ import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 type LocalOwner = { origin: string; email: string; password: string };
 export type SupabaseConfig = { url: string; key: string; localOwner?: LocalOwner };
 const clientOptions = { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false };
+const requestTimeoutMs = 20_000;
+const fetchWithTimeout: typeof fetch = (input, init) => fetch(input, {
+  ...init,
+  signal: init?.signal ? AbortSignal.any([init.signal, AbortSignal.timeout(requestTimeoutMs)]) : AbortSignal.timeout(requestTimeoutMs),
+});
 const localSessions = new WeakMap<SupabaseConfig, Promise<LocalSession>>();
 type LocalSession = { token: string; expiresAt: number; user: { id: string; email: string } };
 
@@ -15,7 +20,7 @@ async function localSession(config: SupabaseConfig, owner: LocalOwner): Promise<
     if (cached.expiresAt > Date.now() + 60_000) return cached;
     if (localSessions.get(config) !== pending) return localSession(config, owner);
   }
-  const client = createClient(config.url, config.key, { auth: clientOptions });
+  const client = createClient(config.url, config.key, { auth: clientOptions, global: { fetch: fetchWithTimeout } });
   const next = client.auth.signInWithPassword({ email: owner.email, password: owner.password }).then(({ data, error }) => {
     if (error || !data.session?.expires_at || !data.user?.email) throw new Error('Local owner unavailable');
     return { token: data.session.access_token, expiresAt: data.session.expires_at * 1000,
@@ -49,7 +54,7 @@ export async function authenticate(request: FastifyRequest, reply: FastifyReply,
   if (!config) return void reply.code(503).send({ error: 'Supabase is not configured.' });
 
   const supabase = createClient(config.url, config.key, {
-    global: { headers: { Authorization: `Bearer ${token}` } },
+    global: { headers: { Authorization: `Bearer ${token}` }, fetch: fetchWithTimeout },
     auth: clientOptions,
   });
   if (localUser) return { supabase, user: localUser };
