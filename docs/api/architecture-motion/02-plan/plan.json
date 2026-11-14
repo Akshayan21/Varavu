@@ -1,0 +1,104 @@
+{
+  "timing": "relative weights; no audio transcript",
+  "restShare": 0.4,
+  "beats": [
+    {
+      "id": "1",
+      "weight": 2,
+      "type": "VISUAL",
+      "text": "You enter information",
+      "must_show": "You enter information",
+      "archetype": "full-frame UI",
+      "engine": "native HTML/SVG",
+      "assets": [
+        "../04-design/tokens.css",
+        "../../../endpoint-manifest.json",
+        "../../../response-examples.json"
+      ]
+    },
+    {
+      "id": "2",
+      "weight": 2,
+      "type": "REST",
+      "text": "Inspect the request",
+      "must_show": "Inspect the request",
+      "archetype": "held frame",
+      "engine": "native HTML/SVG",
+      "assets": [
+        "../04-design/tokens.css",
+        "../../../endpoint-manifest.json",
+        "../../../response-examples.json"
+      ]
+    },
+    {
+      "id": "3",
+      "weight": 3,
+      "type": "VISUAL",
+      "text": "Check before changing",
+      "must_show": "Check before changing",
+      "archetype": "typographic",
+      "engine": "native HTML/SVG",
+      "assets": [
+        "../04-design/tokens.css",
+        "../../../endpoint-manifest.json",
+        "../../../response-examples.json"
+      ]
+    },
+    {
+      "id": "4",
+      "weight": 2,
+      "type": "VISUAL",
+      "text": "Read or save safely",
+      "must_show": "Read or save safely",
+      "archetype": "full-frame UI",
+      "engine": "native HTML/SVG",
+      "assets": [
+        "../04-design/tokens.css",
+        "../../../endpoint-manifest.json",
+        "../../../response-examples.json"
+      ]
+    },
+    {
+      "id": "5",
+      "weight": 2,
+      "type": "REST",
+      "text": "Inspect the result",
+      "must_show": "Inspect the result",
+      "archetype": "held frame",
+      "engine": "native HTML/SVG",
+      "assets": [
+        "../04-design/tokens.css",
+        "../../../endpoint-manifest.json",
+        "../../../response-examples.json"
+      ]
+    },
+    {
+      "id": "6",
+      "weight": 2,
+      "type": "VISUAL",
+      "text": "Send the result back",
+      "must_show": "Send the result back",
+      "archetype": "typographic",
+      "engine": "native HTML/SVG",
+      "assets": [
+        "../04-design/tokens.css",
+        "../../../endpoint-manifest.json",
+        "../../../response-examples.json"
+      ]
+    },
+    {
+      "id": "7",
+      "weight": 2,
+      "type": "REST",
+      "text": "The screen updates",
+      "must_show": "The screen updates",
+      "archetype": "held frame",
+      "engine": "native HTML/SVG",
+      "assets": [
+        "../04-design/tokens.css",
+        "../../../endpoint-manifest.json",
+        "../../../response-examples.json"
+      ]
+    }
+  ]
+}

@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { authenticate, type SupabaseConfig } from './workspace.js';
 import { documentHtml, renderPdf } from './pdf.js';
 import { createHash, randomUUID } from 'node:crypto';
+import { databaseError } from './http.js';
 
 const uuid = z.uuid();
 const date = z.iso.date();
@@ -14,31 +15,28 @@ const line = z.object({
   style: z.string().trim().max(100).optional(), styleId: uuid.nullable().optional(),
   printType: z.string().max(100).optional(), placement: z.string().max(100).optional(),
   unitCode: z.string().max(40).optional(), placementDetail: text.optional(),
-  discountCents: z.number().int().nonnegative().optional(), adjustmentCents: z.number().int().optional(),
+  discountCents: z.number().int().nonnegative().max(Number.MAX_SAFE_INTEGER).optional(), adjustmentCents: z.number().int().min(-Number.MAX_SAFE_INTEGER).max(Number.MAX_SAFE_INTEGER).optional(),
   adjustmentReason: text.optional(), taxProfileId: uuid.optional(),
-});
-const draft = z.object({
+  hsnSacCode: z.string().trim().max(20).optional(),
+}).strict();
+export const draft = z.object({
   id: uuid, version: z.number().int().positive().optional(), customerId: uuid,
   replacementForInvoiceId: uuid.optional(),
   date, due: date, reference: z.string().max(100).optional(), notes: text.optional(), terms: text.optional(),
   bank: z.record(z.string(),z.string().max(300)).optional(), upi: z.string().max(200).optional(),
+  placeOfSupplyStateCode: z.string().trim().max(10).optional(),
+  taxTreatment: z.enum(['none','intra_state','inter_state','other']).optional(),
   discountCents: z.number().int().nonnegative().max(Number.MAX_SAFE_INTEGER).default(0),
   taxBasisPoints: z.number().int().min(0).max(10000).optional(), lines: z.array(line).min(1).max(100),
 }).strict();
-const challan = z.object({
+export const challan = z.object({
   id: uuid, version: z.number().int().positive().optional(), customerId: uuid.nullable().optional(),
   recipient: z.string().trim().min(1).max(200), date,
   from: z.string().trim().min(1).max(2000), to: z.string().trim().min(1).max(2000),
   notes: text.optional(), billId: z.union([uuid,z.literal('')]).nullable().optional(),
   items: z.array(z.object({ description: z.string().trim().min(1).max(300), quantity: decimal,
-    unit: z.string().min(1).max(100), remarks: text.optional() })).min(1).max(100),
+    unit: z.string().min(1).max(100), remarks: text.optional() }).strict()).min(1).max(100),
 }).strict();
-
-function databaseError(reply: FastifyReply, error: { code: string; message: string }) {
-  const status = ({ '42501':403, '23505':409, '40001':409, '55P03':409, 'P0002':404,
-    '23514':400, '23502':400, '23503':400, '22P02':400, '22003':400, '22007':400 } as Record<string,number>)[error.code] ?? 503;
-  return reply.code(status).send({ error: status === 503 ? 'Database operation unavailable. Please retry.' : error.message });
-}
 
 export function registerBilling(app: FastifyInstance, config?: SupabaseConfig) {
   const base = '/api/v1/entities/:entityId';

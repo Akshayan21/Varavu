@@ -1,0 +1,1443 @@
+{
+  "registeredRouteCount": 84,
+  "expandedExampleCount": 101,
+  "endpoints": [
+    {
+      "method": "GET",
+      "path": "/api/v1/health",
+      "group": "Workspace",
+      "title": "Process health",
+      "response": "Health",
+      "query": {},
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/health/ready",
+      "group": "Workspace",
+      "title": "Database readiness",
+      "response": "Readiness",
+      "query": {},
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/auth/session",
+      "group": "Workspace",
+      "title": "Verify caller session",
+      "response": "Session",
+      "query": {},
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/workspace/initialize",
+      "group": "Workspace",
+      "title": "Initialize workspace",
+      "response": "Initialized",
+      "query": {},
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workspace",
+      "group": "Workspace",
+      "title": "Read workspace",
+      "response": "Workspace",
+      "query": {},
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/workspace",
+      "group": "Workspace",
+      "title": "Update workspace",
+      "response": "Workspace",
+      "body": {
+        "name": "Billing Workspace",
+        "timezone": "Asia/Kolkata"
+      },
+      "query": {},
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/preferences",
+      "group": "Workspace",
+      "title": "Read preferences",
+      "response": "Preferences",
+      "query": {},
+      "status": 200,
+      "notes": "Before the first save, the response is PreferencesDefault instead."
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/preferences",
+      "group": "Workspace",
+      "title": "Save preferences",
+      "response": "Preferences",
+      "body": {
+        "lastEntityId": "22222222-2222-4222-8222-222222222222",
+        "skipEntitySelector": false,
+        "preferences": {
+          "compactTables": false
+        }
+      },
+      "query": {},
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/workspace/documents",
+      "group": "Workspace",
+      "title": "Compatibility document feed",
+      "response": "Documents",
+      "query": {
+        "page": 1
+      },
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/entities",
+      "group": "Directories",
+      "title": "List company records",
+      "response": "EntityList",
+      "query": {
+        "page": 1,
+        "pageSize": 25,
+        "active": "true",
+        "search": ""
+      },
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/entities",
+      "group": "Directories",
+      "title": "Create company",
+      "response": "Entity",
+      "body": {
+        "legal_name": "Example Printing Company",
+        "entity_code": "DEMO",
+        "billing_address": {
+          "line1": "10 Sample Road",
+          "city": "Tiruppur"
+        },
+        "phone": "9876543210"
+      },
+      "query": {},
+      "status": 201,
+      "notes": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/entities/{id}",
+      "group": "Directories",
+      "title": "Read company",
+      "response": "Entity",
+      "query": {},
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/entities/{id}",
+      "group": "Directories",
+      "title": "Update company",
+      "response": "EntityUpdated",
+      "body": {
+        "legal_name": "Updated example name"
+      },
+      "query": {},
+      "status": 200,
+      "notes": "Optional If-Match header contains the current record version."
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/entities/{entityId}/customers",
+      "group": "Directories",
+      "title": "List customer records",
+      "response": "CustomerList",
+      "query": {
+        "page": 1,
+        "pageSize": 25,
+        "active": "true",
+        "search": ""
+      },
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/entities/{entityId}/customers",
+      "group": "Directories",
+      "title": "Create customer",
+      "response": "Customer",
+      "body": {
+        "legal_name": "Example Customer",
+        "billing_address": {
+          "line1": "20 Customer Road"
+        },
+        "phone": "9876543210",
+        "contact_name": "Customer contact",
+        "contact_phone": "9876543211"
+      },
+      "query": {},
+      "status": 201,
+      "notes": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/entities/{entityId}/customers/{id}",
+      "group": "Directories",
+      "title": "Read customer",
+      "response": "Customer",
+      "query": {},
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/entities/{entityId}/customers/{id}",
+      "group": "Directories",
+      "title": "Update customer",
+      "response": "CustomerUpdated",
+      "body": {
+        "legal_name": "Updated example name"
+      },
+      "query": {},
+      "status": 200,
+      "notes": "Optional If-Match header contains the current record version."
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/entities/{entityId}/archive",
+      "group": "Directories",
+      "title": "archive company",
+      "response": "EntityArchived",
+      "body": {
+        "version": 4
+      },
+      "query": {},
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/entities/{entityId}/customers/{id}/archive",
+      "group": "Directories",
+      "title": "archive customer",
+      "response": "CustomerArchived",
+      "body": {
+        "version": 1
+      },
+      "query": {},
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/entities/{entityId}/restore",
+      "group": "Directories",
+      "title": "restore company",
+      "response": "EntityRestored",
+      "body": {
+        "version": 5
+      },
+      "query": {},
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/entities/{entityId}/customers/{id}/restore",
+      "group": "Directories",
+      "title": "restore customer",
+      "response": "CustomerRestored",
+      "body": {
+        "version": 2
+      },
+      "query": {},
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/entities/{entityId}/settings",
+      "group": "Directories",
+      "title": "Update company defaults",
+      "response": "EntitySettings",
+      "body": {
+        "version": 7,
+        "changes": {
+          "roundingIncrement": 0,
+          "defaultTerms": "Payment due in 30 days"
+        }
+      },
+      "query": {},
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/entities/{entityId}/customers/{id}/summary",
+      "group": "Analytics",
+      "title": "Customer summary",
+      "response": "CustomerSummary",
+      "query": {
+        "from": "2026-11-01",
+        "asOf": "2026-11-30"
+      },
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/entities/{entityId}/invoices",
+      "group": "Documents",
+      "title": "List invoices",
+      "response": "InvoiceList",
+      "query": {
+        "page": 1,
+        "pageSize": 25
+      },
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/entities/{entityId}/invoices/{id}",
+      "group": "Documents",
+      "title": "Read invoices",
+      "response": "InvoiceIssued",
+      "query": {},
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/entities/{entityId}/invoices",
+      "group": "Documents",
+      "title": "Save invoices draft",
+      "response": "InvoiceDraft",
+      "body": {
+        "id": "33333333-3333-4333-8333-333333333333",
+        "customerId": "44444444-4444-4444-8444-444444444444",
+        "date": "2026-11-14",
+        "due": "2026-12-14",
+        "reference": "PO-100",
+        "notes": "Example printing work",
+        "discountCents": 0,
+        "taxBasisPoints": 500,
+        "lines": [
+          {
+            "id": 1,
+            "description": "Front print",
+            "quantity": "100",
+            "rate": "12.50",
+            "style": "ST-001",
+            "printType": "DTF",
+            "placement": "Front",
+            "unitCode": "PCS"
+          }
+        ]
+      },
+      "query": {},
+      "status": 200,
+      "notes": "Current implementation returns 200, including first creation. Reuse the creation UUID on retry."
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/entities/{entityId}/invoices/{id}",
+      "group": "Documents",
+      "title": "Replace invoices draft",
+      "response": "InvoiceDraft",
+      "body": {
+        "customerId": "44444444-4444-4444-8444-444444444444",
+        "date": "2026-11-14",
+        "due": "2026-12-14",
+        "reference": "PO-100",
+        "notes": "Example printing work",
+        "discountCents": 0,
+        "taxBasisPoints": 500,
+        "lines": [
+          {
+            "id": 1,
+            "description": "Front print",
+            "quantity": "100",
+            "rate": "12.50",
+            "style": "ST-001",
+            "printType": "DTF",
+            "placement": "Front",
+            "unitCode": "PCS"
+          }
+        ],
+        "version": 3
+      },
+      "query": {},
+      "status": 200,
+      "notes": "Supply the complete editable draft, not a partial field patch."
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/entities/{entityId}/invoices/{id}",
+      "group": "Documents",
+      "title": "Delete invoices draft",
+      "response": null,
+      "query": {
+        "version": 3
+      },
+      "status": 204,
+      "notes": ""
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/entities/{entityId}/invoices/{id}/issue",
+      "group": "Documents",
+      "title": "Issue invoices",
+      "response": "InvoiceIssued",
+      "body": {
+        "version": 3
+      },
+      "query": {},
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/entities/{entityId}/invoices/{id}/cancel",
+      "group": "Documents",
+      "title": "Cancel invoices",
+      "response": "InvoiceCancelled",
+      "body": {
+        "reason": "Corrected document needed"
+      },
+      "query": {},
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/entities/{entityId}/invoices/{id}/pdf",
+      "group": "Files",
+      "title": "Download invoices PDF",
+      "response": "PDF",
+      "query": {},
+      "status": 200,
+      "notes": "Binary PDF response. Requires issued/cancelled document and working Chromium/private Storage."
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/entities/{entityId}/challans",
+      "group": "Documents",
+      "title": "List challans",
+      "response": "ChallanList",
+      "query": {
+        "page": 1,
+        "pageSize": 25
+      },
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/entities/{entityId}/challans/{id}",
+      "group": "Documents",
+      "title": "Read challans",
+      "response": "ChallanIssued",
+      "query": {},
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/entities/{entityId}/challans",
+      "group": "Documents",
+      "title": "Save challans draft",
+      "response": "ChallanDraft",
+      "body": {
+        "id": "66666666-6666-4666-8666-666666666666",
+        "recipient": "Example Customer",
+        "date": "2026-11-14",
+        "from": "10 Sample Road, Tiruppur",
+        "to": "20 Customer Road",
+        "notes": "Delivery example",
+        "items": [
+          {
+            "description": "Printed garments",
+            "quantity": "100",
+            "unit": "Pieces",
+            "remarks": "Packed"
+          }
+        ]
+      },
+      "query": {},
+      "status": 200,
+      "notes": "Current implementation returns 200, including first creation. Reuse the creation UUID on retry."
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/entities/{entityId}/challans/{id}",
+      "group": "Documents",
+      "title": "Replace challans draft",
+      "response": "ChallanDraft",
+      "body": {
+        "recipient": "Example Customer",
+        "date": "2026-11-14",
+        "from": "10 Sample Road, Tiruppur",
+        "to": "20 Customer Road",
+        "notes": "Delivery example",
+        "items": [
+          {
+            "description": "Printed garments",
+            "quantity": "100",
+            "unit": "Pieces",
+            "remarks": "Packed"
+          }
+        ],
+        "version": 2
+      },
+      "query": {},
+      "status": 200,
+      "notes": "Supply the complete editable draft, not a partial field patch."
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/v1/entities/{entityId}/challans/{id}",
+      "group": "Documents",
+      "title": "Delete challans draft",
+      "response": null,
+      "query": {
+        "version": 2
+      },
+      "status": 204,
+      "notes": ""
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/entities/{entityId}/challans/{id}/issue",
+      "group": "Documents",
+      "title": "Issue challans",
+      "response": "ChallanIssued",
+      "body": {
+        "version": 2
+      },
+      "query": {},
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/entities/{entityId}/challans/{id}/cancel",
+      "group": "Documents",
+      "title": "Cancel challans",
+      "response": "ChallanCancelled",
+      "body": {
+        "reason": "Corrected document needed"
+      },
+      "query": {},
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/entities/{entityId}/challans/{id}/pdf",
+      "group": "Files",
+      "title": "Download challans PDF",
+      "response": "PDF",
+      "query": {},
+      "status": 200,
+      "notes": "Binary PDF response. Requires issued/cancelled document and working Chromium/private Storage."
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/entities/{entityId}/invoices/{id}/delete",
+      "group": "Documents",
+      "title": "Compatibility draft deletion",
+      "response": "DeleteCompatibility",
+      "body": {
+        "version": 3
+      },
+      "query": {},
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/entities/{entityId}/invoices/preview",
+      "group": "Documents",
+      "title": "Calculate without saving",
+      "response": "InvoicePreview",
+      "body": {
+        "id": "33333333-3333-4333-8333-333333333333",
+        "customerId": "44444444-4444-4444-8444-444444444444",
+        "date": "2026-11-14",
+        "due": "2026-12-14",
+        "reference": "PO-100",
+        "notes": "Example printing work",
+        "discountCents": 0,
+        "taxBasisPoints": 500,
+        "lines": [
+          {
+            "id": 1,
+            "description": "Front print",
+            "quantity": "100",
+            "rate": "12.50",
+            "style": "ST-001",
+            "printType": "DTF",
+            "placement": "Front",
+            "unitCode": "PCS"
+          }
+        ]
+      },
+      "query": {},
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/entities/{entityId}/invoices/{id}/duplicate",
+      "group": "Documents",
+      "title": "Duplicate into new draft",
+      "response": "InvoiceDuplicate",
+      "body": {
+        "id": "55555555-5555-4555-8555-555555555555",
+        "date": "2026-11-14"
+      },
+      "query": {},
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/entities/{entityId}/invoices/{id}/payments",
+      "group": "Payments",
+      "title": "Invoice receipt history",
+      "response": "Receipts",
+      "query": {},
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/entities/{entityId}/invoices/{id}/payments",
+      "group": "Payments",
+      "title": "Record payment",
+      "response": "InvoicePaid",
+      "body": {
+        "date": "2026-11-14",
+        "cents": 50000,
+        "method": "bank_transfer",
+        "reference": "BANK-100",
+        "notes": "Partial payment"
+      },
+      "query": {},
+      "status": 200,
+      "notes": "Required Idempotency-Key header. The result is the complete updated invoice, not an isolated receipt."
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/entities/{entityId}/invoices/{id}/payments/{paymentId}/reverse",
+      "group": "Payments",
+      "title": "Reverse payment",
+      "response": "InvoiceReversed",
+      "body": {
+        "reason": "Incorrect entry"
+      },
+      "query": {},
+      "status": 200,
+      "notes": "The result is the complete updated invoice."
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/entities/{entityId}/challans/{id}/acknowledge",
+      "group": "Documents",
+      "title": "Acknowledge delivery",
+      "response": "ChallanAcknowledged",
+      "body": {
+        "receivedBy": "Receiving contact",
+        "receivedAt": "2026-11-13T20:21:07.299Z",
+        "notes": "Received in good condition"
+      },
+      "query": {},
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/entities/{entityId}/styles",
+      "group": "Catalogs",
+      "title": "Search active styles",
+      "response": "StyleSearch",
+      "query": {
+        "search": "ST"
+      },
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/entities/{entityId}/styles/resolve",
+      "group": "Catalogs",
+      "title": "Resolve or create style",
+      "response": "Style",
+      "body": {
+        "number": "ST-001"
+      },
+      "query": {},
+      "status": 200,
+      "notes": "Both an existing match and a new insertion return 200 with a full style row."
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/entities/{entityId}/catalog",
+      "group": "Catalogs",
+      "title": "Read company catalogs",
+      "response": "Catalog",
+      "query": {},
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/entities/{entityId}/catalog",
+      "group": "Catalogs",
+      "title": "Compatibility catalog update",
+      "response": "StyleUpdated",
+      "body": {
+        "table": "styles",
+        "id": "3188f54a-8cb9-4b9b-9b27-ae4ec1bc59d6",
+        "data": {
+          "description": "Reusable garment print"
+        }
+      },
+      "query": {},
+      "status": 200,
+      "notes": "Legacy shape. Prefer versioned PATCH for new clients."
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/entities/{entityId}/templates",
+      "group": "Catalogs",
+      "title": "Publish immutable template",
+      "response": "TemplatePublished",
+      "body": {
+        "type": "invoice",
+        "settings": {
+          "accent": "#123456",
+          "preset": "minimal"
+        }
+      },
+      "query": {},
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/entities/{entityId}/tax-profiles",
+      "group": "Catalogs",
+      "title": "Create tax profile",
+      "response": "TaxProfile",
+      "body": {
+        "name": "Other tax 5%",
+        "tax_mode": "other",
+        "other_tax_rate": 5
+      },
+      "query": {},
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/entities/{entityId}/print-types",
+      "group": "Catalogs",
+      "title": "Create print-types",
+      "response": "PrintTypeCreated",
+      "body": {
+        "code": "EXAMPLE",
+        "label": "Example option",
+        "sort_order": 10
+      },
+      "query": {},
+      "status": 201,
+      "notes": ""
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/entities/{entityId}/placements",
+      "group": "Catalogs",
+      "title": "Create placements",
+      "response": "PlacementCreated",
+      "body": {
+        "code": "EXAMPLE",
+        "label": "Example option",
+        "sort_order": 10
+      },
+      "query": {},
+      "status": 201,
+      "notes": ""
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/entities/{entityId}/units",
+      "group": "Catalogs",
+      "title": "Create units",
+      "response": "UnitCreated",
+      "body": {
+        "code": "EXAMPLE",
+        "label": "Example option",
+        "sort_order": 10
+      },
+      "query": {},
+      "status": 201,
+      "notes": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/entities/{entityId}/styles/{id}",
+      "group": "Catalogs",
+      "title": "Read styles",
+      "response": "Style",
+      "query": {},
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/entities/{entityId}/styles/{id}",
+      "group": "Catalogs",
+      "title": "Update styles",
+      "response": "StyleUpdated",
+      "body": {
+        "version": 1,
+        "changes": {
+          "description": "Reusable garment print",
+          "is_active": true
+        }
+      },
+      "query": {},
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/entities/{entityId}/print-types/{id}",
+      "group": "Catalogs",
+      "title": "Read print-types",
+      "response": "PrintType",
+      "query": {},
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/entities/{entityId}/print-types/{id}",
+      "group": "Catalogs",
+      "title": "Update print-types",
+      "response": "PrintTypeUpdated",
+      "body": {
+        "version": 1,
+        "changes": {
+          "label": "Updated print type",
+          "is_active": true
+        }
+      },
+      "query": {},
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/entities/{entityId}/placements/{id}",
+      "group": "Catalogs",
+      "title": "Read placements",
+      "response": "Placement",
+      "query": {},
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/entities/{entityId}/placements/{id}",
+      "group": "Catalogs",
+      "title": "Update placements",
+      "response": "PlacementUpdated",
+      "body": {
+        "version": 1,
+        "changes": {
+          "label": "Updated placement",
+          "is_active": true
+        }
+      },
+      "query": {},
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/entities/{entityId}/units/{id}",
+      "group": "Catalogs",
+      "title": "Read units",
+      "response": "Unit",
+      "query": {},
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/entities/{entityId}/units/{id}",
+      "group": "Catalogs",
+      "title": "Update units",
+      "response": "UnitUpdated",
+      "body": {
+        "version": 1,
+        "changes": {
+          "label": "Updated unit",
+          "is_active": true
+        }
+      },
+      "query": {},
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/entities/{entityId}/tax-profiles/{id}",
+      "group": "Catalogs",
+      "title": "Read tax-profiles",
+      "response": "TaxProfile",
+      "query": {},
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "PATCH",
+      "path": "/api/v1/entities/{entityId}/tax-profiles/{id}",
+      "group": "Catalogs",
+      "title": "Update tax-profiles",
+      "response": "TaxProfileUpdated",
+      "body": {
+        "version": 1,
+        "changes": {
+          "name": "Updated tax profile",
+          "is_active": true
+        }
+      },
+      "query": {},
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/entities/{entityId}/templates/{id}",
+      "group": "Catalogs",
+      "title": "Read template version",
+      "response": "Template",
+      "query": {},
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/entities/{entityId}/payments",
+      "group": "Payments",
+      "title": "List payments",
+      "response": "PaymentList",
+      "query": {
+        "page": 1,
+        "pageSize": 25
+      },
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/entities/{entityId}/audit",
+      "group": "Catalogs",
+      "title": "List audit",
+      "response": "AuditList",
+      "query": {
+        "page": 1,
+        "pageSize": 25
+      },
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/entities/{entityId}/templates",
+      "group": "Catalogs",
+      "title": "List templates",
+      "response": "TemplateList",
+      "query": {
+        "page": 1,
+        "pageSize": 25
+      },
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/entities/{entityId}/styles/directory",
+      "group": "Catalogs",
+      "title": "List styles/directory",
+      "response": "StyleList",
+      "query": {
+        "page": 1,
+        "pageSize": 25
+      },
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/entities/{entityId}/files",
+      "group": "Files",
+      "title": "List files",
+      "response": "FileList",
+      "query": {
+        "page": 1,
+        "pageSize": 25
+      },
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/entities/{entityId}/sequences",
+      "group": "Catalogs",
+      "title": "List sequences",
+      "response": "SequenceList",
+      "query": {
+        "page": 1,
+        "pageSize": 25
+      },
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/entities/{entityId}/payments/{id}",
+      "group": "Payments",
+      "title": "Read payment row",
+      "response": "Payment",
+      "query": {},
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/entities/{entityId}/files/{id}",
+      "group": "Files",
+      "title": "Read file job",
+      "response": "File",
+      "query": {},
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/entities/{entityId}/files/{id}/retry",
+      "group": "Files",
+      "title": "Retry file job",
+      "response": "File",
+      "query": {},
+      "status": 202,
+      "notes": "Returns the full file row. Ready files remain ready. Failed/expired-lease jobs become pending."
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/entities/{entityId}/assets",
+      "group": "Files",
+      "title": "Upload company image",
+      "response": "Asset",
+      "body": {
+        "kind": "logo",
+        "base64": "{{imageBase64}}"
+      },
+      "query": {},
+      "status": 200,
+      "notes": "Supply complete PNG/JPEG base64, up to 512 KB decoded. The placeholder is not an image."
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/entities/{entityId}/assets/url",
+      "group": "Files",
+      "title": "Get signed company image URL",
+      "response": "AssetUrl",
+      "query": {
+        "path": "{{assetPath}}"
+      },
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/entities/{entityId}/dashboard",
+      "group": "Analytics",
+      "title": "Company dashboard",
+      "response": "Dashboard",
+      "query": {
+        "from": "2026-11-01",
+        "asOf": "2026-11-30"
+      },
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/analytics/central",
+      "group": "Analytics",
+      "title": "Consolidated dashboard",
+      "response": "Dashboard",
+      "query": {
+        "entities": "{{entityId}}",
+        "from": "2026-11-01",
+        "asOf": "2026-11-30"
+      },
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/reports/billing",
+      "group": "Reports",
+      "title": "Read billing report",
+      "response": "Report_billing",
+      "query": {
+        "entities": "{{entityId}}",
+        "from": "2026-11-01",
+        "asOf": "2026-11-30"
+      },
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/reports/billing/exports",
+      "group": "Reports",
+      "title": "Request billing export",
+      "response": "ExportCreated",
+      "body": {
+        "entities": [
+          "{{entityId}}"
+        ],
+        "from": "2026-11-01",
+        "asOf": "2026-11-30",
+        "format": "csv"
+      },
+      "query": {},
+      "status": 201,
+      "notes": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/reports/collections",
+      "group": "Reports",
+      "title": "Read collections report",
+      "response": "Report_collections",
+      "query": {
+        "entities": "{{entityId}}",
+        "from": "2026-11-01",
+        "asOf": "2026-11-30"
+      },
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/reports/collections/exports",
+      "group": "Reports",
+      "title": "Request collections export",
+      "response": "ExportCreated",
+      "body": {
+        "entities": [
+          "{{entityId}}"
+        ],
+        "from": "2026-11-01",
+        "asOf": "2026-11-30",
+        "format": "csv"
+      },
+      "query": {},
+      "status": 201,
+      "notes": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/reports/outstanding",
+      "group": "Reports",
+      "title": "Read outstanding report",
+      "response": "Report_outstanding",
+      "query": {
+        "entities": "{{entityId}}",
+        "from": "2026-11-01",
+        "asOf": "2026-11-30"
+      },
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/reports/outstanding/exports",
+      "group": "Reports",
+      "title": "Request outstanding export",
+      "response": "ExportCreated",
+      "body": {
+        "entities": [
+          "{{entityId}}"
+        ],
+        "from": "2026-11-01",
+        "asOf": "2026-11-30",
+        "format": "csv"
+      },
+      "query": {},
+      "status": 201,
+      "notes": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/reports/customers",
+      "group": "Reports",
+      "title": "Read customers report",
+      "response": "Report_customers",
+      "query": {
+        "entities": "{{entityId}}",
+        "from": "2026-11-01",
+        "asOf": "2026-11-30"
+      },
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/reports/customers/exports",
+      "group": "Reports",
+      "title": "Request customers export",
+      "response": "ExportCreated",
+      "body": {
+        "entities": [
+          "{{entityId}}"
+        ],
+        "from": "2026-11-01",
+        "asOf": "2026-11-30",
+        "format": "csv"
+      },
+      "query": {},
+      "status": 201,
+      "notes": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/reports/monthly",
+      "group": "Reports",
+      "title": "Read monthly report",
+      "response": "Report_monthly",
+      "query": {
+        "entities": "{{entityId}}",
+        "from": "2026-11-01",
+        "asOf": "2026-11-30"
+      },
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/reports/monthly/exports",
+      "group": "Reports",
+      "title": "Request monthly export",
+      "response": "ExportCreated",
+      "body": {
+        "entities": [
+          "{{entityId}}"
+        ],
+        "from": "2026-11-01",
+        "asOf": "2026-11-30",
+        "format": "csv"
+      },
+      "query": {},
+      "status": 201,
+      "notes": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/reports/print-type",
+      "group": "Reports",
+      "title": "Read print-type report",
+      "response": "Report_print-type",
+      "query": {
+        "entities": "{{entityId}}",
+        "from": "2026-11-01",
+        "asOf": "2026-11-30"
+      },
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/reports/print-type/exports",
+      "group": "Reports",
+      "title": "Request print-type export",
+      "response": "ExportCreated",
+      "body": {
+        "entities": [
+          "{{entityId}}"
+        ],
+        "from": "2026-11-01",
+        "asOf": "2026-11-30",
+        "format": "csv"
+      },
+      "query": {},
+      "status": 201,
+      "notes": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/reports/challans",
+      "group": "Reports",
+      "title": "Read challans report",
+      "response": "Report_challans",
+      "query": {
+        "entities": "{{entityId}}",
+        "from": "2026-11-01",
+        "asOf": "2026-11-30"
+      },
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/reports/challans/exports",
+      "group": "Reports",
+      "title": "Request challans export",
+      "response": "ExportCreated",
+      "body": {
+        "entities": [
+          "{{entityId}}"
+        ],
+        "from": "2026-11-01",
+        "asOf": "2026-11-30",
+        "format": "csv"
+      },
+      "query": {},
+      "status": 201,
+      "notes": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/reports/cancelled",
+      "group": "Reports",
+      "title": "Read cancelled report",
+      "response": "Report_cancelled",
+      "query": {
+        "entities": "{{entityId}}",
+        "from": "2026-11-01",
+        "asOf": "2026-11-30"
+      },
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/reports/cancelled/exports",
+      "group": "Reports",
+      "title": "Request cancelled export",
+      "response": "ExportCreated",
+      "body": {
+        "entities": [
+          "{{entityId}}"
+        ],
+        "from": "2026-11-01",
+        "asOf": "2026-11-30",
+        "format": "csv"
+      },
+      "query": {},
+      "status": 201,
+      "notes": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/reports/companies",
+      "group": "Reports",
+      "title": "Read companies report",
+      "response": "Report_companies",
+      "query": {
+        "entities": "{{entityId}}",
+        "from": "2026-11-01",
+        "asOf": "2026-11-30"
+      },
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/reports/companies/exports",
+      "group": "Reports",
+      "title": "Request companies export",
+      "response": "ExportCreated",
+      "body": {
+        "entities": [
+          "{{entityId}}"
+        ],
+        "from": "2026-11-01",
+        "asOf": "2026-11-30",
+        "format": "csv"
+      },
+      "query": {},
+      "status": 201,
+      "notes": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/exports",
+      "group": "Files",
+      "title": "List exports",
+      "response": "ExportList",
+      "query": {
+        "page": 1,
+        "pageSize": 25
+      },
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/exports/{id}/status",
+      "group": "Files",
+      "title": "Read export status",
+      "response": "ExportStatus",
+      "query": {},
+      "status": 200,
+      "notes": ""
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/exports/{id}",
+      "group": "Files",
+      "title": "Download PDF/CSV export",
+      "response": "EXPORT",
+      "query": {},
+      "status": 200,
+      "notes": "application/pdf or text/csv; charset=utf-8 according to the requested export format."
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/exports/{id}/retry",
+      "group": "Files",
+      "title": "Retry export",
+      "response": "ExportRetry",
+      "query": {},
+      "status": 202,
+      "notes": "A ready export returns status ready instead of pending. Expired exports require a new request."
+    }
+  ]
+}

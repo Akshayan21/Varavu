@@ -13,7 +13,8 @@ const recordId = z.object({ id: z.uuid() });
 
 function databaseError(reply: FastifyReply, code: string) {
   if (code === '23505') return reply.code(409).send({ error: 'A record with that code already exists.' });
-  if (code === '23514') return reply.code(400).send({ error: 'The record does not satisfy the directory rules. GST registration requires a GSTIN.' });
+  if (['23514','23502','22P02','22003'].includes(code)) return reply.code(400).send({ error: 'The record does not satisfy the directory rules. Check tax identifiers and required fields.' });
+  if (code === '23503') return reply.code(409).send({ error: 'A referenced record is unavailable or still in use.' });
   if (code === '42501') return reply.code(403).send({ error: 'Access denied.' });
   return reply.code(503).send({ error: 'Directory temporarily unavailable.' });
 }
@@ -77,9 +78,15 @@ export function registerDirectory(app: FastifyInstance, config?: SupabaseConfig)
           if (!input.success || Object.keys(input.data).length === 0) {
             return reply.code(400).send({ error: 'Provide valid fields to update.', issues: input.error?.issues });
           }
-          const { data, error } = await supabase.from(table).update(input.data)
-            .match(scope).eq('id', id.data.id).select().maybeSingle();
+          const version = request.headers['if-match'];
+          if (version !== undefined && (typeof version !== 'string' || !/^"?[1-9]\d*"?$/.test(version))) {
+            return reply.code(400).send({ error: 'If-Match must contain the current record version.' });
+          }
+          let update = supabase.from(table).update(input.data).match(scope).eq('id', id.data.id);
+          if (typeof version === 'string') update = update.eq('version',Number(version.replaceAll('"','')));
+          const { data, error } = await update.select().maybeSingle();
           if (error) return databaseError(reply, error.code);
+          if (!data && version !== undefined) return reply.code(409).send({ error: 'Record changed or is unavailable. Reload before editing.' });
           return data ?? reply.code(404).send({ error: 'Record not found.' });
         }
         const { data, error } = await supabase.from(table).select()

@@ -135,4 +135,102 @@ describe('PostgreSQL migrations and billing transactions',()=>{
     await db.exec('reset role');
     await db.query("select set_config('request.jwt.claim.sub',$1,false)",[owner]);
   });
+  test('lists scoped documents, reports dashboard balances, and returns customer history',async()=>{
+    const documents=await call('list_documents',[entity,'invoices',JSON.stringify({page:1,pageSize:1,status:'issued',search:'A/'})]);
+    expect(documents.data).toHaveLength(1);
+    expect(documents.total).toBe(1);
+    const summary=await call('dashboard_data',[[entity,otherEntity],'2026-01-01','2026-12-31']);
+    expect(Number(summary.billed)).toBe(385);
+    expect(Number(summary.outstanding)).toBe(385);
+    expect(summary.entities).toHaveLength(2);
+    expect(summary.monthly).toHaveLength(12);
+    const buyer=await call('customer_summary',[entity,customer,'2026-01-01','2026-12-31']);
+    expect(buyer.customer.id).toBe(customer);
+    await expect(call('document_detail',[otherEntity,'invoices',invoice.id])).rejects.toThrow(/not found/);
+  });
+  test('preview computes totals while rolling back draft, style, and audit writes',async()=>{
+    const input=bill();input.lines[0].style='PREVIEW-ONLY';
+    const preview=await call('preview_invoice',[entity,JSON.stringify(input)]);
+    expect(preview.totalCents).toBe(38500);
+    expect((await db.query('select id from public.invoices where id=$1',[input.id])).rows).toHaveLength(0);
+    expect((await db.query("select id from public.styles where style_number='PREVIEW-ONLY'")).rows).toHaveLength(0);
+  });
+  test('duplicates an invoice as an unnumbered draft and deletes drafts with version guards',async()=>{
+    const duplicated=await call('duplicate_invoice',[entity,invoice.id,randomUUID(),'2026-11-10']);
+    expect(duplicated.status).toBe('Draft');
+    expect(duplicated.number).toBeNull();
+    expect(duplicated.totalCents).toBe(invoice.totalCents);
+    await expect(call('delete_invoice_draft',[entity,duplicated.id,duplicated.version-1])).rejects.toThrow();
+    await call('delete_invoice_draft',[entity,duplicated.id,duplicated.version]);
+    const d=await call('save_challan_draft',[entity,JSON.stringify({id:randomUUID(),date:'2026-11-10',recipient:'Draft recipient',from:'A',to:'B',items:[{description:'Print',quantity:'1',unit:'Pieces'}]})]);
+    await call('delete_challan_draft',[entity,d.id,d.version]);
+    expect((await db.query('select id from public.dc_items where dc_id=$1',[d.id])).rows).toHaveLength(0);
+  });
+  test('catalog updates require current versions and permit scoped style defaults',async()=>{
+    const unit=await call('configure_catalog',[entity,'units',null,null,JSON.stringify({code:'PACK','label':'Packs'})]);
+    const style=await call('resolve_style',[entity,'ST-001']);
+    const changed=await call('configure_catalog',[entity,'styles',style.id,style.version,JSON.stringify({defaultUnitId:unit.id,description:'Reusable style'})]);
+    expect(changed.default_unit_id).toBe(unit.id);
+    await expect(call('configure_catalog',[entity,'styles',style.id,style.version,JSON.stringify({is_active:false})])).rejects.toThrow(/changed/);
+    const updated=await call('update_workspace',[JSON.stringify({name:'Production workspace',timezone:'Asia/Kolkata'})]);
+    expect(updated.name).toBe('Production workspace');
+    await expect(call('update_workspace',[JSON.stringify({timezone:'Invalid/Timezone'})])).rejects.toThrow(/timezone/);
+  });
+  test('filters reports by customer and materializes the same export filters',async()=>{
+    const report=await call('filtered_report_data',[[entity],'billing','2026-01-01','2026-12-31',new Date().toISOString(),customer]);
+    expect(report.rows).toHaveLength(1);
+    expect(report.customerId).toBe(customer);
+    const job=await call('request_filtered_export',[[entity],'billing','2026-01-01','2026-12-31','csv',customer]);
+    expect(job.filters_json.customerId).toBe(customer);
+    expect(job.data_snapshot.rows).toHaveLength(1);
+    await expect(call('filtered_report_data',[[entity,entity],'billing','2026-01-01','2026-12-31'])).rejects.toThrow(/selection/);
+  });
+  test('retains tax context, adjustments, and HSN details in editable payloads',async()=>{
+    const input={...bill(),placeOfSupplyStateCode:'33',taxTreatment:'other'};
+    input.lines[0]={...input.lines[0],hsnSacCode:'9988',adjustmentCents:100,adjustmentReason:'Extra setup'} as any;
+    const saved=await call('save_invoice_draft',[entity,JSON.stringify(input)]);
+    expect(saved.placeOfSupplyStateCode).toBe('33');
+    expect(saved.lines[0].hsnSacCode).toBe('9988');
+    expect(saved.lines[0].adjustmentCents).toBe(100);
+    const invalid={...bill(),taxBasisPoints:0.5};
+    await expect(call('save_invoice_draft',[entity,JSON.stringify(invalid)])).rejects.toThrow(/precision/);
+    await expect(db.query("update public.audit_logs set action='edited' where resource_id=$1",[saved.id])).rejects.toThrow(/Historical/);
+  });
+  test('reports company and customer counts, collections, and balances without multiplying line joins',async()=>{
+    const summary=await call('filtered_report_data',[[entity],'customers','2026-01-01','2026-12-31',new Date().toISOString(),customer]);
+    expect(summary.headers).toHaveLength(7);
+    expect(summary.rows[0][2]).toBe(1);
+    expect(Number(summary.rows[0][3])).toBe(385);
+    expect(Number(summary.rows[0][5])).toBe(385);
+    const companies=await call('filtered_report_data',[[entity,otherEntity],'companies','2026-01-01','2026-12-31']);
+    expect(companies.rows).toHaveLength(2);
+    expect(companies.headers).toHaveLength(5);
+  });
+  test('rejects fractional receipt paise and stale PDF completion tokens',async()=>{
+    await expect(call('record_payment',[entity,invoice.id,JSON.stringify({date:'2026-11-02',cents:100.5,method:'cash'}),'fractional'])).rejects.toThrow(/integer paise/);
+    const job=await call('claim_document_file',[entity,'invoice',invoice.id]);
+    expect(job.status).toBe('processing');
+    await expect(call('retry_document_file',[entity,job.id])).rejects.toThrow(/running/);
+    await expect(call('finish_document_file',[entity,job.id,randomUUID(),JSON.stringify({error:'Retry'})])).rejects.toThrow(/expired/);
+    await call('finish_document_file',[entity,job.id,job.claim_token,JSON.stringify({error:'Temporary renderer failure'})]);
+    const retried=await call('retry_document_file',[entity,job.id]);
+    expect(retried.status).toBe('pending');
+    const claimed=await call('claim_document_file',[entity,'invoice',invoice.id]);
+    expect(claimed.claim_token).not.toBe(job.claim_token);
+  });
+  test('archive and restore preserve history while blocking new drafts',async()=>{
+    const e=(await db.query<any>('select * from public.billing_entities where id=$1',[otherEntity])).rows[0];
+    const archived=await call('archive_directory_record',[otherEntity,'billing_entities',otherEntity,e.version,false]);
+    expect(archived.is_active).toBe(false);
+    await expect(call('resolve_style',[otherEntity,'BLOCKED'])).rejects.toThrow(/archived/);
+    const restored=await call('archive_directory_record',[otherEntity,'billing_entities',otherEntity,archived.version,true]);
+    expect(restored.is_active).toBe(true);
+  });
+  test('expired export claims cannot complete and can be safely requeued',async()=>{
+    const job=await call('request_filtered_export',[[entity],'billing','2026-01-01','2026-12-31','csv',null]);
+    const claimed=await call('claim_report_export',[job.id]);
+    await db.query("update public.report_exports set lease_expires_at=clock_timestamp()-interval '1 minute' where id=$1",[job.id]);
+    await expect(call('finish_report_export',[job.id,claimed.claim_token,JSON.stringify({error:'Stale worker'})])).rejects.toThrow(/expired/);
+    expect((await call('retry_report_export',[job.id])).status).toBe('pending');
+  });
 });

@@ -3,35 +3,37 @@ import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
 import { authenticate, type SupabaseConfig } from './workspace.js';
 import { renderPdf, reportHtml } from './pdf.js';
+import { databaseError } from './http.js';
 
 const types=z.enum(['billing','collections','outstanding','customers','monthly','print-type','challans','cancelled','companies']);
-const period=z.object({entities:z.array(z.uuid()).min(1).max(100),from:z.iso.date(),asOf:z.iso.date()});
+const period=z.object({entities:z.array(z.uuid()).min(1).max(100),from:z.iso.date(),asOf:z.iso.date(),customerId:z.uuid().optional()});
 
 export function registerReports(app:FastifyInstance,config?:SupabaseConfig) {
   app.get('/api/v1/reports/:type',async(request,reply)=>{
     const auth=await authenticate(request,reply,config);if(!auth)return reply;
     const type=types.safeParse((request.params as {type:string}).type);
-    const query=z.object({entities:z.string(),from:z.iso.date(),asOf:z.iso.date()}).safeParse(request.query);
+    const query=z.object({entities:z.string(),from:z.iso.date(),asOf:z.iso.date(),customerId:z.uuid().optional(),recordedThrough:z.iso.datetime({offset:true}).optional()}).strict().safeParse(request.query);
     const input=query.success?period.safeParse({...query.data,entities:query.data.entities.split(',')}):null;
     if(!type.success || !input?.success) return reply.code(400).send({error:'Invalid report filters.'});
-    const {data,error}=await auth.supabase.rpc('report_data',{p_entities:input.data.entities,p_type:type.data,p_from:input.data.from,p_as_of:input.data.asOf});
-    return error?reply.code(error.code==='42501'?403:400).send({error:error.message}):data;
+    const {data,error}=await auth.supabase.rpc('filtered_report_data',{p_entities:input.data.entities,p_type:type.data,p_from:input.data.from,p_as_of:input.data.asOf,
+      p_customer:input.data.customerId ?? null,...(query.success && query.data.recordedThrough?{p_recorded_through:query.data.recordedThrough}:{})});
+    return error?databaseError(reply,error):data;
   });
   app.post('/api/v1/reports/:type/exports',async(request,reply)=>{
     const auth=await authenticate(request,reply,config);if(!auth)return reply;
     const type=types.safeParse((request.params as {type:string}).type);
-    const input=period.extend({format:z.enum(['pdf','csv'])}).safeParse(request.body);
+    const input=period.extend({format:z.enum(['pdf','csv'])}).strict().safeParse(request.body);
     if(!type.success || !input.success) return reply.code(400).send({error:'Invalid report filters.'});
-    const {data,error}=await auth.supabase.rpc('request_report_export',{p_entities:input.data.entities,p_type:type.data,
-      p_from:input.data.from,p_as_of:input.data.asOf,p_format:input.data.format});
-    return error?reply.code(error.code==='42501'?403:400).send({error:error.message}):{id:data.id};
+    const {data,error}=await auth.supabase.rpc('request_filtered_export',{p_entities:input.data.entities,p_type:type.data,
+      p_from:input.data.from,p_as_of:input.data.asOf,p_format:input.data.format,p_customer:input.data.customerId ?? null});
+    return error?databaseError(reply,error):reply.code(201).send({id:data.id});
   });
   app.get('/api/v1/exports/:id',async(request,reply)=>{
     const auth=await authenticate(request,reply,config);if(!auth)return reply;
     const id=z.uuid().safeParse((request.params as {id:string}).id);
     if(!id.success)return reply.code(400).send({error:'Invalid export ID.'});
     const {data:job,error}=await auth.supabase.rpc('claim_report_export',{p_id:id.data});
-    if(error)return reply.code(error.code==='42501'||error.code==='P0002'?404:409).send({error:error.message});
+    if(error)return databaseError(reply,error);
     const mime=job.format==='pdf'?'application/pdf':'text/csv; charset=utf-8';
     try {
       if(job.status!=='ready') {
